@@ -19,6 +19,7 @@ namespace CetStudentBook
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSession();
 
             var app = builder.Build();
 
@@ -36,6 +37,7 @@ namespace CetStudentBook
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthorization();
 

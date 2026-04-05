@@ -1,0 +1,41 @@
+﻿@model IEnumerable<CetStudentBook.Models.Order>
+
+<h2>Siparişlerim (My Orders)</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Henüz hiç siparişiniz bulunmamaktadır.</div>
+}
+else
+{
+    @foreach (var order in Model)
+    {
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <strong>Sipariş Numarası:</strong> #@order.Id |
+                <strong>Tarih:</strong> @order.OrderDate.ToString("dd.MM.yyyy HH:mm")
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Ürün Adı</th>
+                            <th>Adet</th>
+                            <th>Birim Fiyat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in order.OrderItems)
+                        {
+                            <tr>
+                                <td>@item.Product.Name</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Price ₺</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+}

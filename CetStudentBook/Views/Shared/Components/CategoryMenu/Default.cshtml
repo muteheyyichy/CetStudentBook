@@ -1,0 +1,8 @@
+﻿@model IEnumerable<CetStudentBook.Models.Category>
+
+@foreach (var item in Model)
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" href="#">@item.Name</a>
+    </li>
+}
