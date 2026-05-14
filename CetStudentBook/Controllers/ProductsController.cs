@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CetStudentBook.Data;
 using CetStudentBook.Models;
-
-// YENİ EKLENEN KÜTÜPHANELER (Resim işlemleri ve dosya yönetimi için)
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using System.IO;
@@ -56,6 +54,8 @@ namespace CetStudentBook.Controllers
         }
 
         // POST: Products/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Price,CategoryId,ImageUrl")] Product product)
@@ -86,10 +86,10 @@ namespace CetStudentBook.Controllers
         }
 
         // POST: Products/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // DİKKAT 1: Bind kısmına "ImageUrl" eklendi.
-        // DİKKAT 2: Parametrelerin sonuna bilgisayardan gelecek dosyayı tutması için "IFormFile? ImageFile" eklendi.
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,CategoryId,ImageUrl")] Product product, IFormFile? ImageFile)
         {
             if (id != product.Id)
@@ -101,47 +101,37 @@ namespace CetStudentBook.Controllers
             {
                 try
                 {
-                    // EĞER KULLANICI YENİ BİR RESİM SEÇTİYSE BU BLOK ÇALIŞIR
                     if (ImageFile != null && ImageFile.Length > 0)
                     {
-                        // 1. Yeni resim için benzersiz bir isim oluştur (aynı isimli dosyalar çakışmasın diye)
-                        string yeniDosyaAdi = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
+                        string newFileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
+                        string imageFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
 
-                        // 2. Resmin kaydedileceği klasör yolunu belirle (wwwroot/images)
-                        string resimKlasoru = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-
-                        // Eğer images adında bir klasör yoksa otomatik oluştur
-                        if (!Directory.Exists(resimKlasoru))
+                        if (!Directory.Exists(imageFolder))
                         {
-                            Directory.CreateDirectory(resimKlasoru);
+                            Directory.CreateDirectory(imageFolder);
                         }
 
-                        string tamKayitYolu = Path.Combine(resimKlasoru, yeniDosyaAdi);
+                        string fullPath = Path.Combine(imageFolder, newFileName);
 
-                        // 3. Resmi ImageSharp ile aç ve hocanın istediği gibi 1024px kontrolü yap
                         using (var image = Image.Load(ImageFile.OpenReadStream()))
                         {
                             if (image.Width > 1024)
                             {
-                                // Genişliği 1024 yap, yüksekliği resmin oranını bozmadan otomatik ayarla
                                 image.Mutate(x => x.Resize(1024, 0));
                             }
-                            // Resmi yeni haliyle klasöre kaydet
-                            image.Save(tamKayitYolu);
+                            image.Save(fullPath);
                         }
 
-                        // 4. Temizlik Vakti: Eğer ürünün önceden kayıtlı bir resmi varsa, o eski resmi diskten sil
                         if (!string.IsNullOrEmpty(product.ImageUrl))
                         {
-                            string eskiResimYolu = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", product.ImageUrl);
-                            if (System.IO.File.Exists(eskiResimYolu))
+                            string oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", product.ImageUrl);
+                            if (System.IO.File.Exists(oldImagePath))
                             {
-                                System.IO.File.Delete(eskiResimYolu);
+                                System.IO.File.Delete(oldImagePath);
                             }
                         }
 
-                        // 5. Ürünün resim yolunu yeni dosyanın adıyla güncelle ki veritabanına bu isim yazılsın
-                        product.ImageUrl = yeniDosyaAdi;
+                        product.ImageUrl = newFileName;
                     }
 
                     _context.Update(product);
