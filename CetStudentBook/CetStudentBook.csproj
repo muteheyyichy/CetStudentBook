@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-CetStudentBook-848da72c-6578-403b-b866-6b773caec212</UserSecretsId>
+	  <NuGetAudit>false</NuGetAudit><NuGetAudit>false</NuGetAudit>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +15,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.3" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.9" />
   </ItemGroup>
 
 </Project>

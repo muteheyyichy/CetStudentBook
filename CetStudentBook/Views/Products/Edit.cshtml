@@ -1,44 +1,72 @@
 ﻿@model CetStudentBook.Models.Product
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Düzenle";
 }
 
-<h1>Edit</h1>
+<h1>Düzenle</h1>
 
-<h4>Product</h4>
+<h4>Ürün Bilgileri</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+    <div class="col-md-6">
+        @* Formun içine 'enctype' ekledim, bu olmazsa resim dosyası gitmez *@
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+                <label asp-for="Name" class="control-label">Ürün Adı</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
+                <label asp-for="Price" class="control-label">Fiyat</label>
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
+                <label asp-for="CategoryId" class="control-label">Kategori ID</label>
                 <input asp-for="CategoryId" class="form-control" />
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <!-- RESİM GÖSTERME VE YÜKLEME ALANI BURADA BAŞLIYOR -->
+            <div class="form-group mt-3">
+                <label>Mevcut Kapak Resmi</label><br />
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    @* Eski resmi burada küçük bir kare olarak görüyorum *@
+                    <img src="~/images/@Model.ImageUrl" style="width:180px; margin-bottom:10px; border:2px solid #ddd; border-radius:8px;" />
+                }
+                else
+                {
+                    <p class="text-muted">Bu ürünün henüz bir resmi yok.</p>
+                }
+                @* Yeni resim seçmezsem eski resim adını veritabanında kaybetmemek için gizli tutuyorum *@
+                <input type="hidden" asp-for="ImageUrl" />
+            </div>
+
+            <div class="form-group mt-3">
+                <label class="control-label">Yeni Resim Seç (Opsiyonel)</label>
+                @* Burası bilgisayardan dosya seçmemizi sağlayan yer *@
+                <input type="file" name="ImageFile" class="form-control" accept="image/*" />
+                <small class="text-info">Yeni resim seçerseniz eskisi silinecek ve 1024px olarak ayarlanacaktır.</small>
+            </div>
+            <!-- RESİM ALANI BİTTİ -->
+
+            <div class="form-group mt-4">
+                <input type="submit" value="Kaydet" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
